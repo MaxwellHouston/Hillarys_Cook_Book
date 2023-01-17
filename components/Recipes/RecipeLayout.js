@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import tortillas from '../../public/tortillas.jpg';
+import cats from '../../public/cats.jpg';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -14,7 +15,7 @@ export default function RecipeLayout() {
         for(let i = 0; i < 10; i++) {
             array.push(
                 <ImageListItem key={i}>
-                    <Image src={tortillas} loading='lazy' />
+                    <Image src={cats} alt='tortillas' loading='lazy' />
                     <ImageListItemBar title='Flour Tortillas' subtitle='By: Hillary'/>
                 </ImageListItem>
             )

@@ -44,7 +44,7 @@ export default function DirectionsForm({directionsList, updateDirectionsList}) {
 
     return(
         <fieldset>
-            <h2>Directions</h2>
+            <h2 className='font-bold'>Directions:</h2>
             <ul>
                 {renderDirections()}
             </ul>

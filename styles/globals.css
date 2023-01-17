@@ -29,8 +29,4 @@ a {
   text-decoration: none;
 }
 
-#background {
-  background-image: url(../public/background.jpg);
-  background-size: contain;
-}
 

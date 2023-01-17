@@ -1,51 +1,69 @@
 import TextField from '@mui/material/TextField';
 import Divider from '@mui/material/Divider';
-import uuid from 'react-uuid';
 import IngredientForm from './IngredientForm';
 import DirectionsForm from './DirectionsForm';
 import UploadFile from './UploadFile';
-import { db, storage } from '../../utilities/firebase';
+import { auth, db, storage } from '../../utilities/firebase';
 import { ref, uploadBytes} from 'firebase/storage';
 import { addDoc, collection } from 'firebase/firestore';
 import { useState } from 'react';
 import AlertSnackbar from '../AlertSnackbar';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import CategoryInput from './CategoryInput';
+import GroupsForm from './GroupsForm';
 
 
 export default function AddForm() {
+    const [user, loading] = useAuthState(auth);
     const [recipeName, setRecipeName] = useState('');
     const [recipeAuthor, setRecipeAuthor] = useState('');
     const [imgFile, setImageFile] = useState(null);
-    const [ingredientsList, setIngredientsList] = useState([{key: 0, name: '', amount: 0, fraction: 0, measure: 'cups'}]);
+    const [category, setCategory] = useState('');
+    const [groups, setGroups] = useState([{id: 0, name: ''}]);
+    const [ingredientsList, setIngredientsList] = useState([{key: 0, name: '', amount: 0, measure: 'none', tag: ''}]);
     const [directionsList, setDirectionsList] = useState([{description: ''}]);
-    const [alert, setAlert] = useState({show: false, message: '', severity: '' });
-
-    const updateIngredientsList = (updatedList) => {
-        setIngredientsList(updatedList);
-    }
-    const updateDirectionsList = (updatedList) => {
-        setDirectionsList(updatedList);
-    }
+    const [alert, setAlert] = useState({show: false, message: '', severity: 'success' });
 
     const closeAlert = () => {
-        setAlert({show: false, message: '', severity: '' });
+        setAlert({show: false, message: '', severity: 'success' });
+    }
+
+    const clearForm = () => {
+        setRecipeName('');
+        setRecipeAuthor('');
+        setImageFile(null);
+        setCategory('');
+        setGroups([{id: 0, name: ''}]);
+        setIngredientsList([{key: 0, name: '', amount: 0, measure: 'none', tag: ''}]);
+        setDirectionsList([{description: ''}]);
+    }
+
+    const updateGroups = () => {
+        
     }
 
     const submitRecipe = async (e) => {
         e.preventDefault();
-        let recipeId = uuid();
+        const keywordsArray = ingredientsList.map(ingredient => ingredient.name);
         let recipeObject = {
-            id: recipeId,
+            uploader: user.displayName,
             name: recipeName,
             author: recipeAuthor,
-            ingredientsArray: ingredientsList,
-            directionsArray: directionsList
+            category,
+            groups,
+            ingredientsList,
+            directionsList,
+            keywordsArray,
+            created: new Date().getTime()
         }
         const collectionRef = collection(db, 'recipes');
-        const imageRef = ref(storage, `recipe-images/${recipeId}`);
+        
         try {
-            await addDoc(collectionRef, recipeObject);
+            const upload = await addDoc(collectionRef, recipeObject);
+            const imageRef = ref(storage, `recipe-images/${upload.id}`);
             await uploadBytes(imageRef, imgFile);
             setAlert({...alert, show: true, severity: 'success', message: 'Recipe uploaded successfully!' });
+            clearForm();
         } catch (error) {
             setAlert({...alert, show: true, severity: 'error', message: 'Upload Failed. Try again or contact site Admin.'});
             console.log(error);
@@ -53,18 +71,27 @@ export default function AddForm() {
     }
 
     return(
-        <form onSubmit={submitRecipe}>
+        <form onSubmit={submitRecipe} className='border-2 border-black rounded-xl p-10 mb-10'>
             <AlertSnackbar status={alert.show} toggle={closeAlert} severity={alert.severity} message={alert.message} />
             <fieldset>
-                <TextField onChange={({target}) => setRecipeName(target.value) } required label="Recipe Name" variant="outlined" />
-                <TextField onChange={({target}) => setRecipeAuthor(target.value)} required  label="Recipe By" variant="outlined" />
-                <UploadFile upload={(file) => setImageFile(file)} />
+                <div className='flex w-full justify-around'>
+                    <TextField onChange={({target}) => setRecipeName(target.value)} value={recipeName} required label="Recipe Name" variant="outlined" size='small' />
+                    <TextField onChange={({target}) => setRecipeAuthor(target.value)} value={recipeAuthor} required  label="Recipe By" variant="outlined" size='small' />
+                    <CategoryInput category={category} updateCategory={setCategory} />
+                </div>
+                <Divider className='my-8' variant="middle" />
+                <UploadFile upload={(file) => setImageFile(file)} file={imgFile} />
+                <Divider className='my-8' variant="middle" />
+                <GroupsForm groups={groups} updateGroups={setGroups} />
+                <Divider className='my-8' variant="middle" />
+                <IngredientForm ingredientsList={ingredientsList} updateIngredientsList={setIngredientsList} groups={groups} />
+                <Divider className='my-8' variant="middle" />
+                <DirectionsForm directionsList={directionsList} updateDirectionsList={setDirectionsList} />
             </fieldset>
-            <Divider className='my-5' variant="middle" />
-            <IngredientForm ingredientsList={ingredientsList} updateIngredientsList={updateIngredientsList} />
-            <Divider className='my-5' variant="middle" />
-            <DirectionsForm directionsList={directionsList} updateDirectionsList={updateDirectionsList} />
-            <button type='submit'>Submit Recipe</button>
+            <Divider className='my-10' variant="middle" />
+            <div className='flex justify-center'>
+                <button className='bg-black text-white p-3 rounded-xl' type='submit'>Submit Recipe</button>
+            </div>
         </form>
     )
 }

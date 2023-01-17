@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import IngredientInput from './IngredientInput';
 import { IoAddCircleSharp } from 'react-icons/io5';
+import { Divider } from '@mui/material';
 
-export default function IngredientForm({ingredientsList, updateIngredientsList}) {
+export default function IngredientForm({ingredientsList, updateIngredientsList, groups}) {
 
     const [nextKey, setNextKey] = useState(1);
 
     const addIngredient = (e) => {
         e.preventDefault();
-        updateIngredientsList([...ingredientsList, {key: nextKey, name: '', amount: 0, fraction: 0, measure: 'cups'} ]);
+        updateIngredientsList([...ingredientsList, {key: nextKey, name: '', amount: 0, measure: 'none', tag: ''} ]);
         setNextKey(nextKey+1);
     }
     
@@ -35,8 +36,9 @@ export default function IngredientForm({ingredientsList, updateIngredientsList})
             id={ingredient.key}
             name={ingredient.name}
             amount={ingredient.amount}
-            fraction={ingredient.fraction}
             measure={ingredient.measure}
+            tag={ingredient.tag}
+            groups={groups}
             updateValue={updateValue}
             deleteIngredient={deleteIngredient} 
         />
@@ -45,8 +47,8 @@ export default function IngredientForm({ingredientsList, updateIngredientsList})
     }
     return(
         <fieldset>
-            <h2>Ingredients</h2>
-            <ul>
+            <h2 className='font-bold'>Ingredients:</h2>
+            <ul className='my-2 space-y-1'>
                 {renderIngredients()}
             </ul>
             <button className='float-right' onClick={addIngredient}>

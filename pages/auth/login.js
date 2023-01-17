@@ -24,7 +24,7 @@ export default function Login() {
 
     useEffect(() => {
         if(user) route.push('/profile');
-    },[user])
+    },[user, route])
 
     return(
         <div className='shadow-xl mt-32 p-10 rounded-lg'>

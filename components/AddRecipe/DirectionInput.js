@@ -14,9 +14,9 @@ export default function DirectionInput({step, description, updateDescription, de
     }
 
     return(
-        <fieldset className="w-full py-4 flex justify-between items-center">
+        <fieldset className="w-full p-4 flex justify-between items-center">
             <p>{step}.</p>
-            <TextField className="w-1/2" multiline label='Step' value={description} onChange={handleUpdate} />
+            <TextField className="w-2/3" multiline label='Step' value={description} onChange={handleUpdate} />
             <button onClick={handleDelete}>
                 <IoTrashSharp className='text-2xl' />  
             </button>

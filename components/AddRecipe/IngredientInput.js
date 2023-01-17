@@ -1,10 +1,10 @@
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
+import Autocomplete from '@mui/material/Autocomplete';
 import { IoTrashSharp } from 'react-icons/io5';
+import IngredientGroupTags from './IngredientGroupTags';
 
-export default function IngredientInput({id, name, amount, fraction, measure, updateValue, deleteIngredient}) {
+export default function IngredientInput({id, name, amount, measure, tag, groups, updateValue, deleteIngredient}) {
 
     const handleNameChange = ({target}) => {
         updateValue(id, target.value, 'name');
@@ -12,11 +12,11 @@ export default function IngredientInput({id, name, amount, fraction, measure, up
     const handleAmountChange = ({target}) => {
         updateValue(id, target.value, 'amount');
     }
-    const handleMeasureChange = ({target}) => {
-        updateValue(id, target.value, 'measure');
+    const handleMeasureChange = (event, values) => {
+        updateValue(id, values, 'measure');
     }
-    const handleFractionChange = ({target}) => {
-        updateValue(id, target.value, 'fraction');
+    const handleTagChange = (value) => {
+        updateValue(id, value, 'tag');
     }
 
     const handleDelete = (e) => {
@@ -24,25 +24,24 @@ export default function IngredientInput({id, name, amount, fraction, measure, up
         deleteIngredient(id);
     }
 
+    const measurementOptions = ['none', 'cup', 'tbsp', 'tsp', 'fl. oz', 'pt', 'qt', 'gallon', 'slice', 'lbs', 'oz', 'clove', 'piece', 'square', 'other' ]
+
     return(
-        <fieldset className='w-full py-4 flex'>
-            <TextField id="outlined-basic" label="Name" variant="outlined" size='small' value={name} onChange={handleNameChange} />    
-            <TextField id="outlined-basic" label="Amount" variant="outlined" size='small' value={amount} onChange={handleAmountChange} />               
-            <InputLabel id='fraction'>Add Fraction</InputLabel>
-            <Select labelId='fraction' label='fraction' value={fraction} onChange={handleFractionChange} size='small'>
-                <MenuItem value={0}>0</MenuItem>
-                <MenuItem value={.25}>1/4</MenuItem>
-                <MenuItem value={.33}>1/3</MenuItem>
-                <MenuItem value={.50}>1/2</MenuItem>
-                <MenuItem value={.66}>2/3</MenuItem>    
-                <MenuItem value={.75}>3/4</MenuItem>
-            </Select>    
-            <InputLabel id='measurement'>Measurement</InputLabel>
-            <Select labelId='measurement' label='Measurement' value={measure} onChange={handleMeasureChange} size='small'>
-                <MenuItem value={'cups'}>Cups</MenuItem>
-                <MenuItem value={'tbsp'}>Tbsp</MenuItem>
-                <MenuItem value={'tsp'}>Tsp</MenuItem>
-            </Select>
+        <fieldset className='w-full p-4 flex space-x-5'>
+            <TextField label="Ingredient" variant="outlined" size='small' value={name} onChange={handleNameChange} />    
+            <TextField className='w-1/6' label="Amount" variant="outlined" size='small' value={amount} onChange={handleAmountChange} />                 
+            <Autocomplete
+                className='w-1/6'
+                size='small'
+                includeInputInList
+                disableClearable
+                options={measurementOptions}
+                renderInput={(params) => <TextField {...params} label='Measurement' />} 
+                value={measure}
+                onChange={handleMeasureChange}
+            />
+            <IngredientGroupTags groups={groups} tag={tag} update={handleTagChange} />
+
             <button onClick={handleDelete}>
                 <IoTrashSharp className='text-2xl' />  
             </button> 

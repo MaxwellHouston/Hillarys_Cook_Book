@@ -2,9 +2,9 @@ import NavBar from "./NavBar";
 
 export default function Layout({children}) {
     return(
-        <div id='background' className=" font-poppins">
+        <div id='background' className=" font-poppins flex flex-wrap justify-center">
             <NavBar />
-            <main className="mx-5">
+            <main className="max-w-3xl">
                 {children}
             </main>
         </div>
