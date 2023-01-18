@@ -18,9 +18,9 @@ export default function AddForm() {
     const [recipeName, setRecipeName] = useState('');
     const [recipeAuthor, setRecipeAuthor] = useState('');
     const [imgFile, setImageFile] = useState(null);
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState(null);
     const [groups, setGroups] = useState([{id: 0, name: ''}]);
-    const [ingredientsList, setIngredientsList] = useState([{key: 0, name: '', amount: 0, measure: 'none', tag: ''}]);
+    const [ingredientsList, setIngredientsList] = useState([{key: 0, name: '', amount: '', measure: 'other', tag: null}]);
     const [directionsList, setDirectionsList] = useState([{description: ''}]);
     const [alert, setAlert] = useState({show: false, message: '', severity: 'success' });
 
@@ -32,14 +32,22 @@ export default function AddForm() {
         setRecipeName('');
         setRecipeAuthor('');
         setImageFile(null);
-        setCategory('');
+        setCategory(null);
         setGroups([{id: 0, name: ''}]);
-        setIngredientsList([{key: 0, name: '', amount: 0, measure: 'none', tag: ''}]);
+        setIngredientsList([{key: 0, name: '', amount: '', measure: 'other', tag: null}]);
         setDirectionsList([{description: ''}]);
     }
 
-    const updateGroups = () => {
-        
+    const deleteTags = (name) => {
+        let updatedArray = ingredientsList.map(ingredient => {
+            if(ingredient.tag === name){
+                ingredient.tag = null;
+                return ingredient
+            } else {
+                return ingredient
+            }
+        });
+        setIngredientsList(updatedArray);
     }
 
     const submitRecipe = async (e) => {
@@ -47,6 +55,7 @@ export default function AddForm() {
         const keywordsArray = ingredientsList.map(ingredient => ingredient.name);
         let recipeObject = {
             uploader: user.displayName,
+            uploaderAvatar: user.photoURL,
             name: recipeName,
             author: recipeAuthor,
             category,
@@ -61,7 +70,7 @@ export default function AddForm() {
         try {
             const upload = await addDoc(collectionRef, recipeObject);
             const imageRef = ref(storage, `recipe-images/${upload.id}`);
-            await uploadBytes(imageRef, imgFile);
+            if(imgFile) await uploadBytes(imageRef, imgFile);
             setAlert({...alert, show: true, severity: 'success', message: 'Recipe uploaded successfully!' });
             clearForm();
         } catch (error) {
@@ -82,7 +91,7 @@ export default function AddForm() {
                 <Divider className='my-8' variant="middle" />
                 <UploadFile upload={(file) => setImageFile(file)} file={imgFile} />
                 <Divider className='my-8' variant="middle" />
-                <GroupsForm groups={groups} updateGroups={setGroups} />
+                <GroupsForm groups={groups} updateGroups={setGroups} deleteTags={deleteTags} />
                 <Divider className='my-8' variant="middle" />
                 <IngredientForm ingredientsList={ingredientsList} updateIngredientsList={setIngredientsList} groups={groups} />
                 <Divider className='my-8' variant="middle" />

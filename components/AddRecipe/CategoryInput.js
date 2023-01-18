@@ -6,7 +6,7 @@ export default function CategoryInput({category, updateCategory}) {
         updateCategory(values);
     }
 
-    const categories = ['','Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Munchies'];
+    const categories = ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Snack', 'Munchies'];
 
     return(
         <Autocomplete
@@ -15,7 +15,7 @@ export default function CategoryInput({category, updateCategory}) {
             includeInputInList
             disableClearable
             options={categories}
-            renderInput={(params) => <TextField {...params} label='Category' />} 
+            renderInput={(params) => <TextField {...params} label='Category' required />} 
             value={category}
             onChange={handleCategoryChange} 
         />

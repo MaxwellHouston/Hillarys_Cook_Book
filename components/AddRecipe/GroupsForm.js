@@ -3,7 +3,7 @@ import { IoAddCircleSharp } from "react-icons/io5";
 import GroupInput from "./GroupInput";
 
 
-export default function GroupsForm({groups, updateGroups}) {
+export default function GroupsForm({groups, updateGroups, deleteTags}) {
     
     const [nextKey, setNextKey] = useState(1);
 
@@ -24,7 +24,8 @@ export default function GroupsForm({groups, updateGroups}) {
         updateGroups(updatedArray);
     }
 
-    const handleDeleteGroup = (id) => {
+    const handleDeleteGroup = (id, name) => {
+        deleteTags(name);
         let updatedArray = groups.filter(group => group.id !== id);
         updateGroups(updatedArray);
     }

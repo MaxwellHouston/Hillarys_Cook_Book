@@ -10,7 +10,7 @@ export default function IngredientInput({id, name, amount, measure, tag, groups,
         updateValue(id, target.value, 'name');
     }
     const handleAmountChange = ({target}) => {
-        updateValue(id, target.value, 'amount');
+        updateValue(id, target.value.toString(), 'amount');
     }
     const handleMeasureChange = (event, values) => {
         updateValue(id, values, 'measure');
@@ -24,7 +24,7 @@ export default function IngredientInput({id, name, amount, measure, tag, groups,
         deleteIngredient(id);
     }
 
-    const measurementOptions = ['none', 'cup', 'tbsp', 'tsp', 'fl. oz', 'pt', 'qt', 'gallon', 'slice', 'lbs', 'oz', 'clove', 'piece', 'square', 'other' ]
+    const measurementOptions = ['other', 'cup', 'tbsp', 'tsp', 'fl. oz', 'pt', 'qt', 'gallon', 'slice', 'lbs', 'oz', 'clove', 'piece', 'square', ]
 
     return(
         <fieldset className='w-full p-4 flex space-x-5'>

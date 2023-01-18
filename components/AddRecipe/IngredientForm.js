@@ -9,7 +9,7 @@ export default function IngredientForm({ingredientsList, updateIngredientsList, 
 
     const addIngredient = (e) => {
         e.preventDefault();
-        updateIngredientsList([...ingredientsList, {key: nextKey, name: '', amount: 0, measure: 'none', tag: ''} ]);
+        updateIngredientsList([...ingredientsList, {key: nextKey, name: '', amount: 0, measure: 'other', tag: null} ]);
         setNextKey(nextKey+1);
     }
     

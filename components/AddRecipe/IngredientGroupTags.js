@@ -7,7 +7,6 @@ export default function IngredientGroupTags({groups, tag, update}) {
     const [groupList, setGroupList] = useState([]);
 
     const handleTagChange = (event, values) => {
-        console.log(event)
         update(values);
     }
 
@@ -15,7 +14,6 @@ export default function IngredientGroupTags({groups, tag, update}) {
         setGroupList(
             groups.map(group => group.name)
         );
-        console.log('helppppp meeeee')
     }, [groups])
 
     return(
@@ -24,9 +22,9 @@ export default function IngredientGroupTags({groups, tag, update}) {
             size='small'
             includeInputInList
             disableClearable
-            options={groupList}
-            renderInput={(params) => <TextField {...params} label='Tags' />} 
-            value={tag}
+            options={groupList.filter(group => group)}
+            renderInput={(params) => <TextField {...params} label='Tags' />}
+            value={tag} 
             onChange={handleTagChange}
         />
     )

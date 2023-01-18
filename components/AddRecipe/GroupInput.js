@@ -8,7 +8,7 @@ export default function GroupInput({id, name, update, remove}) {
     }
 
     const handleDelete = () => {
-        remove(id);
+        remove(id, name);
     }
 
     return (
