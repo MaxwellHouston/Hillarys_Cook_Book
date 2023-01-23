@@ -22,7 +22,7 @@ export default function NavBar() {
                     </Link>
                     :
                     <div className="flex items-center justify-between max-w-fit space-x-10">
-                        <Link href='/favorites'>
+                        <Link href='/favorites' className="hidden sm:block">
                             <button className="py-3">Favorites</button>
                         </Link>
                         <Link href='/add'>
