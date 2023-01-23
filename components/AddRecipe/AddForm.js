@@ -5,13 +5,12 @@ import DirectionsForm from './DirectionsForm';
 import UploadFile from './UploadFile';
 import { auth, db, storage } from '../../utilities/firebase';
 import { ref, uploadBytes} from 'firebase/storage';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useState } from 'react';
 import AlertSnackbar from '../AlertSnackbar';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import CategoryInput from './CategoryInput';
 import GroupsForm from './GroupsForm';
-
 
 export default function AddForm() {
     const [user, loading] = useAuthState(auth);
@@ -63,7 +62,7 @@ export default function AddForm() {
             ingredientsList,
             directionsList,
             keywordsArray,
-            created: new Date().getTime()
+            created: serverTimestamp()
         }
         const collectionRef = collection(db, 'recipes');
         
@@ -80,7 +79,7 @@ export default function AddForm() {
     }
 
     return(
-        <form onSubmit={submitRecipe} className='border-2 border-black rounded-xl p-10 mb-10'>
+        <form onSubmit={submitRecipe} className='border-2 border-black rounded-xl p-10 mb-10 shadow-2xl'>
             <AlertSnackbar status={alert.show} toggle={closeAlert} severity={alert.severity} message={alert.message} />
             <fieldset>
                 <div className='flex w-full justify-around'>
