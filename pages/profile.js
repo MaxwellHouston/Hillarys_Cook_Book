@@ -1,7 +1,7 @@
 import { auth } from '../utilities/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 
 export default function Profile() {
@@ -9,10 +9,10 @@ export default function Profile() {
     const route = useRouter();
     const [user, loading] = useAuthState(auth);
 
-    const checkUser = async () => {
+    const checkUser =useCallback(async () => {
         if(loading) return;
         if(!user) return route.push('/auth/login');
-    }
+    }, [loading, route, user]) 
 
     const logOut = () => {
         auth.signOut();
@@ -21,11 +21,11 @@ export default function Profile() {
 
     useEffect(() => {
         checkUser();
-    }, [user, loading])
+    }, [checkUser])
 
     return(
         <div className='flex flex-wrap justify-around'>
-            <h2>{user ? user.displayName : 'User'}'s Saved Recipes</h2>
+            <h2>{user ? user.displayName : 'User'}&apos;s Saved Recipes</h2>
             <button onClick={logOut}>Sign Out</button>
             <ul className='w-full'>
                 <li>Recipe 1</li>
