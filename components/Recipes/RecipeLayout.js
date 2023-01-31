@@ -7,10 +7,10 @@ import ImageListItemBar from '@mui/material/ImageListItemBar';
 import ListSubheader from '@mui/material/ListSubheader';
 
 
-export default function RecipeLayout() {
+export default function RecipeLayout({recipes}) {
 
 
-    const renderImages = () => {
+    const renderStinker = () => {
         let array = [];
         for(let i = 0; i < 10; i++) {
             array.push(
@@ -25,7 +25,7 @@ export default function RecipeLayout() {
 
     return(
         <ImageList cols={3}>
-            {renderImages()}
+            {renderStinker()}
         </ImageList>
     )
 }
