@@ -4,8 +4,8 @@ import IngredientForm from './IngredientForm';
 import DirectionsForm from './DirectionsForm';
 import UploadFile from './UploadFile';
 import { auth, db, storage } from '../../utilities/firebase';
-import { ref, uploadBytes} from 'firebase/storage';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import { addDoc, collection, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import AlertSnackbar from '../AlertSnackbar';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -51,7 +51,6 @@ export default function AddForm() {
 
     const submitRecipe = async (e) => {
         e.preventDefault();
-        const keywordsArray = ingredientsList.map(ingredient => ingredient.name);
         let recipeObject = {
             uploader: user.displayName,
             uploaderAvatar: user.photoURL,
@@ -61,15 +60,18 @@ export default function AddForm() {
             groups,
             ingredientsList,
             directionsList,
-            keywordsArray,
+            keywordsArray: ingredientsList.map(ingredient => ingredient.name),
+            imgSrc: null,
             created: serverTimestamp()
         }
         const collectionRef = collection(db, 'recipes');
-        
         try {
             const upload = await addDoc(collectionRef, recipeObject);
             const imageRef = ref(storage, `recipe-images/${upload.id}`);
-            if(imgFile) await uploadBytes(imageRef, imgFile);
+            if(imgFile){ 
+                let imgSnapshot = await uploadBytes(imageRef, imgFile);
+                updateDoc(upload, {imgSrc: await getDownloadURL(imgSnapshot.ref)});
+            }
             setAlert({...alert, show: true, severity: 'success', message: 'Recipe uploaded successfully!' });
             clearForm();
         } catch (error) {
