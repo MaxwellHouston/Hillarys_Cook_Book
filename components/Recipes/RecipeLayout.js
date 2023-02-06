@@ -1,10 +1,8 @@
 import Image from 'next/image'
-import tortillas from '../../public/tortillas.jpg'
 import cats from '../../public/cats.jpg'
 import ImageList from '@mui/material/ImageList'
 import ImageListItem from '@mui/material/ImageListItem'
 import ImageListItemBar from '@mui/material/ImageListItemBar'
-import ListSubheader from '@mui/material/ListSubheader'
 import Link from 'next/link'
 
 export default function RecipeLayout({ recipes }) {
@@ -15,6 +13,18 @@ export default function RecipeLayout({ recipes }) {
         <ImageListItem key={i}>
           <Image src={cats} alt="tortillas" loading="lazy" />
           <ImageListItemBar title="Flour Tortillas" subtitle="By: Hillary" />
+        </ImageListItem>,
+      )
+    }
+    return array
+  }
+
+  const renderSkeleton = () => {
+    let array = []
+    for (let i = 0; i < 9; i++) {
+      array.push(
+        <ImageListItem key={i} className="overflow-hidden">
+          <div className="h-[200px] w-[200px] animate-pulse bg-slate-300"></div>
         </ImageListItem>,
       )
     }
@@ -45,8 +55,8 @@ export default function RecipeLayout({ recipes }) {
   }
 
   return (
-    <ImageList cols={3} rowHeight={200}>
-      {renderRecipes()}
+    <ImageList className="w-full" cols={3} rowHeight={200}>
+      {recipes ? renderRecipes() : renderSkeleton()}
     </ImageList>
   )
 }

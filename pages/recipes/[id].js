@@ -2,6 +2,7 @@ import { Divider } from '@mui/material'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useState } from 'react'
+import BreadCrumbs from '../../components/BreadCrumb'
 import Directions from '../../components/Recipes/Directions'
 import Ingredients from '../../components/Recipes/Ingredients'
 import RecipePageSkeleton from '../../components/Recipes/RecipePageSkeleton'
@@ -32,6 +33,7 @@ export default function Recipe() {
         <RecipePageSkeleton />
       ) : (
         <div className="mt-4 mb-8 w-full rounded-2xl border-2 bg-white p-10 shadow-2xl">
+          <BreadCrumbs recipeName={recipe.name} />
           <h1 className="mb-5 text-center text-5xl font-bold">
             {recipe ? recipe.name : 'Loading...'}
           </h1>
