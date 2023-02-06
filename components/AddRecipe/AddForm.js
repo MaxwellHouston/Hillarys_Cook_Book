@@ -1,5 +1,4 @@
 import TextField from '@mui/material/TextField'
-import Divider from '@mui/material/Divider'
 import IngredientForm from './IngredientForm'
 import DirectionsForm from './DirectionsForm'
 import UploadFile from './UploadFile'
@@ -134,27 +133,27 @@ export default function AddForm() {
           />
           <CategoryInput category={category} updateCategory={setCategory} />
         </div>
-        <Divider className="my-8" variant="middle" />
+        <hr className="my-8" />
         <UploadFile upload={(file) => setImageFile(file)} file={imgFile} />
-        <Divider className="my-8" variant="middle" />
+        <hr className="my-8" />
         <GroupsForm
           groups={groups}
           updateGroups={setGroups}
           deleteTags={deleteTags}
         />
-        <Divider className="my-8" variant="middle" />
+        <hr className="my-8" />
         <IngredientForm
           ingredientsList={ingredientsList}
           updateIngredientsList={setIngredientsList}
           groups={groups}
         />
-        <Divider className="my-8" variant="middle" />
+        <hr className="my-8" />
         <DirectionsForm
           directionsList={directionsList}
           updateDirectionsList={setDirectionsList}
         />
       </fieldset>
-      <Divider className="my-10" variant="middle" />
+      <hr className="my-10" />
       <div className="flex justify-center">
         <button className="rounded-xl bg-black p-3 text-white" type="submit">
           Submit Recipe
