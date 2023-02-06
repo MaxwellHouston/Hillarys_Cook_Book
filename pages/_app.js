@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Layout from '../components/Layout'
 
 export default function App({ Component, pageProps }) {
-  return(
+  return (
     <Layout>
       <Head>
         <title>Hillary&apos;s Cook Book</title>
@@ -12,6 +12,6 @@ export default function App({ Component, pageProps }) {
         <link rel="icon" href="/chef-logo.png" />
       </Head>
       <Component {...pageProps} />
-    </Layout> 
+    </Layout>
   )
 }
