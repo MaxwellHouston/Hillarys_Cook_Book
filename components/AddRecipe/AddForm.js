@@ -105,7 +105,7 @@ export default function AddForm() {
   return (
     <form
       onSubmit={submitRecipe}
-      className="mb-10 rounded-xl border-2 border-black bg-white p-10 shadow-2xl"
+      className="mb-10 p-10"
     >
       <AlertSnackbar
         status={alert.show}

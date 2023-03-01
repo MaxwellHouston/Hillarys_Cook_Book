@@ -7,7 +7,7 @@ export default function Layout({ children }) {
       className=" flex flex-wrap justify-center bg-slate-300 font-poppins"
     >
       <NavBar />
-      <main className="max-w-3xl">{children}</main>
+      <main className="max-w-3xl md:w-[48rem] bg-white">{children}</main>
     </div>
   )
 }

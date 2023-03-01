@@ -1,6 +1,4 @@
-import { Divider } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
-import DisplayBy from '../components/DisplayBy'
 import HomeTabs from '../components/HomeTabs'
 import RecipeLayout from '../components/Recipes/RecipeLayout'
 import { getAllRecipes } from '../utilities/db'
@@ -8,7 +6,6 @@ import { getAllRecipes } from '../utilities/db'
 export default function Recipes() {
   const [recipes, setRecipes] = useState(null)
   const [filteredRecipes, setFilteredRecipes] = useState(null)
-  const [order, setOrder] = useState('recent')
   const [tab, setTab] = useState('All')
 
   const loadRecipes = useCallback(async () => {
@@ -29,12 +26,13 @@ export default function Recipes() {
 
   return (
     <div className="flex text-center">
-      <div className="my-10 min-h-[85vh] w-full rounded-2xl border-2 border-slate-700 bg-white px-10 pb-5 shadow-2xl shadow-black">
-        <h1 className="my-5 text-6xl font-bold">{tab}</h1>
-        <Divider className="my-8" variant="middle" />
+      <div className="my-10 min-h-[85vh] w-full bg-white px-10 pb-5">
+        <h1 className="my-8 text-6xl font-bold">{tab}</h1>
+        <HomeTabs tab={tab} setTab={setTab} />
+        <hr className="mb-8 border-black" />
         <RecipeLayout recipes={filteredRecipes} />
       </div>
-      <HomeTabs tab={tab} setTab={setTab} />
+      
     </div>
   )
 }

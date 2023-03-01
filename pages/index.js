@@ -14,8 +14,8 @@ export default function Home() {
   }, [user, route])
 
   return (
-    <div className="flex w-full text-center">
-      <div className="my-10 flex min-h-[85vh] w-[50vw] max-w-[700px] items-center justify-center rounded-2xl border-2 border-black bg-[url('/cookbook-background.jpg')] bg-cover bg-center shadow-2xl">
+    <div className="flex w-full text-center bg-[url('/cookbook-background.jpg')] bg-cover bg-center">
+      <div className="my-10 flex min-h-[85vh] w-[50vw] max-w-[700px] items-center justify-center ">
         <div className="flex h-1/2 w-1/2 -translate-y-12 flex-wrap justify-center border-2 p-6">
           <h1 className="my-5 w-full font-[Unbounded] text-4xl font-bold text-white">
             Hillary&apos;s Cookbook

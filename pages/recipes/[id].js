@@ -32,7 +32,7 @@ export default function Recipe() {
       {!recipe ? (
         <RecipePageSkeleton />
       ) : (
-        <div className="mt-4 mb-8 w-full rounded-2xl border-2 bg-white p-10 shadow-2xl">
+        <div className="mt-4 w-full p-10 pb-16 shadow-2xl">
           <BreadCrumbs recipeName={recipe.name} />
           <h1 className="mb-5 text-center text-5xl font-bold">
             {recipe ? recipe.name : 'Loading...'}
