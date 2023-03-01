@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import IngredientInput from './IngredientInput'
 import { IoAddCircleSharp } from 'react-icons/io5'
-import { Divider } from '@mui/material'
 
 export default function IngredientForm({
   ingredientsList,

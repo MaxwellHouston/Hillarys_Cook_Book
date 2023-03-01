@@ -105,7 +105,7 @@ export default function AddForm() {
   return (
     <form
       onSubmit={submitRecipe}
-      className="mb-10 p-10"
+      className="mb-10 p-4 md:p-10"
     >
       <AlertSnackbar
         status={alert.show}
@@ -114,7 +114,7 @@ export default function AddForm() {
         message={alert.message}
       />
       <fieldset>
-        <div className="flex w-full justify-around">
+        <div className="flex flex-col xs:flex-row space-y-3 xs:space-y-0 md:flex-nowrap w-full justify-around">
           <TextField
             onChange={({ target }) => setRecipeName(target.value)}
             value={recipeName}

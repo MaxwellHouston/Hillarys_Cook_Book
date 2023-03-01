@@ -12,7 +12,7 @@ export default function GroupInput({ id, name, update, remove }) {
 
   return (
     <OutlinedInput
-      className="w-1/4 pr-1"
+      className="xs:w-1/4 pr-1"
       size="small"
       value={name}
       onChange={handleUpdate}

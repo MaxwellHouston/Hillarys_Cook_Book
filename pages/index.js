@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { auth } from '../utilities/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { Divider } from '@mui/material'
+import { Button, Divider } from '@mui/material'
 import { useEffect } from 'react'
 
 export default function Home() {
@@ -14,27 +14,15 @@ export default function Home() {
   }, [user, route])
 
   return (
-    <div className="flex w-full text-center bg-[url('/cookbook-background.jpg')] bg-cover bg-center">
-      <div className="my-10 flex min-h-[85vh] w-[50vw] max-w-[700px] items-center justify-center ">
-        <div className="flex h-1/2 w-1/2 -translate-y-12 flex-wrap justify-center border-2 p-6">
-          <h1 className="my-5 w-full font-[Unbounded] text-4xl font-bold text-white">
+    <div className="flex w-full text-center justify-center bg-[url('/cookbook-background.jpg')] bg-cover bg-center">
+      <div className="my-10 flex min-h-[85vh] items-center justify-center ">
+        <div className="flex h-1/2 w-1/2 -translate-y-12 flex-wrap justify-center items-center border-2 p-6">
+          <h1 className="my-5 w-full font-[Unbounded] xs:text-3xl md:text-5xl font-bold text-white">
             Hillary&apos;s Cookbook
           </h1>
-          <div className="w-1/2">
+          <div className="w-full">
             <Link href="/recipes" className="w-full">
-              <button className="rounded-xl bg-white p-2 shadow-2xl shadow-black">
-                Start Cooking
-              </button>
-            </Link>
-            <Divider
-              variant="middle"
-              className="my-5 border-white text-white"
-              sx={{ '&::before, &::after': { borderColor: 'white' } }}
-            >
-              Or
-            </Divider>
-            <Link href="/auth/login" className="text-white underline">
-              Log in
+              <button className='bg-red-700 hover:bg-red-400 active:translate-y-1 active:translate-x-1 active:shadow-none xs:text-base text-sm text-white font-bold p-3 rounded-xl border shadow-xl shadow-black'>Start Cooking</button>
             </Link>
           </div>
         </div>

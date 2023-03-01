@@ -50,7 +50,7 @@ export default function IngredientInput({
   ]
 
   return (
-    <fieldset className="flex w-full space-x-5 p-4">
+    <fieldset className="flex flex-col space-y-3 md:space-y-0 md:flex-row w-full md:space-x-5 md:p-4">
       <TextField
         label="Ingredient"
         variant="outlined"
@@ -59,7 +59,7 @@ export default function IngredientInput({
         onChange={handleNameChange}
       />
       <TextField
-        className="w-1/6"
+        className="md:w-1/6"
         label="Amount"
         variant="outlined"
         size="small"
@@ -67,7 +67,7 @@ export default function IngredientInput({
         onChange={handleAmountChange}
       />
       <Autocomplete
-        className="w-1/6"
+        className="md:w-1/6"
         size="small"
         includeInputInList
         disableClearable

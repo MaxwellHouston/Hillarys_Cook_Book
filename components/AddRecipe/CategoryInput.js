@@ -15,17 +15,18 @@ export default function CategoryInput({ category, updateCategory }) {
   ]
 
   return (
-    <Autocomplete
-      className="w-1/4"
-      size="small"
-      includeInputInList
-      disableClearable
-      options={categories}
-      renderInput={(params) => (
-        <TextField {...params} label="Category" required />
-      )}
-      value={category}
-      onChange={handleCategoryChange}
-    />
+    <div className="min-w-[10rem]">
+      <Autocomplete
+        size="small"
+        includeInputInList
+        disableClearable
+        options={categories}
+        renderInput={(params) => (
+          <TextField {...params} label="Category" required />
+        )}
+        value={category}
+        onChange={handleCategoryChange}
+      />
+    </div>
   )
 }

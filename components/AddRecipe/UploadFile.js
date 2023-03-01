@@ -29,18 +29,18 @@ export default function UploadFile({ upload, file }) {
   }, [file])
 
   return (
-    <div className="my-8 flex items-center">
+    <div className="my-8 flex items-center justify-between">
       <h2 className="mr-5 font-bold">Upload photo:</h2>
-      <div className="flex items-center">
+      <div className="flex items-center max-w-fit">
         <input
-          className="w-3/4"
+          className="w-3/4 mr-5"
           type="file"
           accept="image/*"
           onChange={handleFileInput}
           ref={fileInput}
         />
         <button
-          onClick={(e) => fileInput.current && fileInput.current.click()}
+          onClick={() => fileInput.current && fileInput.current.click()}
         />
         <button onClick={clearFile}>
           <IoCloseSharp />
@@ -49,7 +49,7 @@ export default function UploadFile({ upload, file }) {
       {imgSrc && (
         <Image src={imgSrc} alt="image preview" width={50} height={50} />
       )}
-      <p className={`w-1/3 pl-5 text-xs`}>
+      <p className={`hidden md:block w-1/4 pl-5 text-xs`}>
         <em>Images with similar height & width appear better in book.</em>
       </p>
     </div>

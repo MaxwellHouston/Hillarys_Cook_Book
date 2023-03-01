@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function BreadCrumbs({ recipeName }) {
   return (
-    <Breadcrumbs className="mb-5">
+    <Breadcrumbs>
       <Link href={'/recipes'} className="hover:text-slate-900">
         Recipes
       </Link>

@@ -41,10 +41,10 @@ export default function GroupsForm({ groups, updateGroups, deleteTags }) {
   }
 
   return (
-    <fieldset className="my-4 flex w-full items-center space-x-2">
+    <fieldset className="my-4 flex flex-col space-y-3 xs:space-y-0 xs:flex-row w-full xs:items-center space-x-2">
       <h2 className="mr-4 font-bold">Group Tags:</h2>
       {renderGroupInputs()}
-      <button onClick={handleAddGroup}>
+      <button className='self-end xs:self-auto' onClick={handleAddGroup}>
         <IoAddCircleSharp className="text-2xl" />
       </button>
     </fieldset>

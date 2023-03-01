@@ -25,9 +25,9 @@ export default function Recipes() {
   }, [recipes, tab])
 
   return (
-    <div className="flex text-center">
-      <div className="my-10 min-h-[85vh] w-full bg-white px-10 pb-5">
-        <h1 className="my-8 text-6xl font-bold">{tab}</h1>
+    <div className="flex flex-col items-center sm:flex-row text-center">
+      <div className="my-10 min-h-[85vh] w-full bg-white px-2 md:px-10 pb-5">
+        <h1 className="mb-4 sm:my-8 text-3xl xs:text-6xl font-bold">{tab}{tab==='All' && ' Recipes'}</h1>
         <HomeTabs tab={tab} setTab={setTab} />
         <hr className="mb-8 border-black" />
         <RecipeLayout recipes={filteredRecipes} />

@@ -34,7 +34,7 @@ export default function Recipe() {
       ) : (
         <div className="mt-4 w-full p-10 pb-16 shadow-2xl">
           <BreadCrumbs recipeName={recipe.name} />
-          <h1 className="mb-5 text-center text-5xl font-bold">
+          <h1 className="my-5 text-center text-5xl font-bold">
             {recipe ? recipe.name : 'Loading...'}
           </h1>
           <Image
