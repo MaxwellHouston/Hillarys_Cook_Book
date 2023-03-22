@@ -32,6 +32,7 @@ export default function AddForm() {
     message: '',
     severity: 'success',
   })
+  const [disableBtn, setDisableBtn] = useState(false);
 
   const closeAlert = () => {
     setAlert({ show: false, message: '', severity: 'success' })
@@ -62,7 +63,8 @@ export default function AddForm() {
   }
 
   const submitRecipe = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setDisableBtn(true);
     let recipeObject = {
       uploader: user.displayName,
       uploaderAvatar: user.photoURL,
@@ -72,7 +74,7 @@ export default function AddForm() {
       groups,
       ingredientsList,
       directionsList,
-      keywordsArray: ingredientsList.map((ingredient) => ingredient.name),
+      keywordsArray: ingredientsList.map((ingredient) => ingredient.name.toLowerCase()),
       imgSrc: null,
       created: serverTimestamp(),
     }
@@ -100,6 +102,7 @@ export default function AddForm() {
       })
       console.log(error)
     }
+    setDisableBtn(false);
   }
 
   return (
@@ -155,7 +158,7 @@ export default function AddForm() {
       </fieldset>
       <hr className="my-10" />
       <div className="flex justify-center">
-        <button className="rounded-xl bg-black p-3 text-white" type="submit">
+        <button className="rounded-xl bg-black p-3 text-white" type="submit" disabled={disableBtn}>
           Submit Recipe
         </button>
       </div>
