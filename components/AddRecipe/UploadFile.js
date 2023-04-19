@@ -34,6 +34,7 @@ export default function UploadFile({ upload, file }) {
       <div className="flex items-center max-w-fit">
         <input
           className="w-3/4 mr-5"
+          required
           type="file"
           accept="image/*"
           onChange={handleFileInput}
