@@ -15,6 +15,13 @@ import AlertSnackbar from '../AlertSnackbar'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import CategoryInput from './CategoryInput'
 import GroupsForm from './GroupsForm'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+} from '@mui/material'
 
 export default function AddForm() {
   const [user, loading] = useAuthState(auth)
@@ -32,7 +39,22 @@ export default function AddForm() {
     message: '',
     severity: 'success',
   })
-  const [disableBtn, setDisableBtn] = useState(false);
+  const [disableBtn, setDisableBtn] = useState(false)
+  const [openConfirm, setOpenConfirm] = useState(false)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    setOpenConfirm(true)
+  }
+
+  const handleSubmitConfirmation = () => {
+    setOpenConfirm(false)
+    submitRecipe()
+  }
+
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false)
+  }
 
   const closeAlert = () => {
     setAlert({ show: false, message: '', severity: 'success' })
@@ -62,9 +84,8 @@ export default function AddForm() {
     setIngredientsList(updatedArray)
   }
 
-  const submitRecipe = async (e) => {
-    e.preventDefault();
-    setDisableBtn(true);
+  const submitRecipe = async () => {
+    setDisableBtn(true)
     let recipeObject = {
       uploader: user.displayName,
       uploaderAvatar: user.photoURL,
@@ -74,7 +95,9 @@ export default function AddForm() {
       groups,
       ingredientsList,
       directionsList,
-      keywordsArray: ingredientsList.map((ingredient) => ingredient.name.toLowerCase()),
+      keywordsArray: ingredientsList.map((ingredient) =>
+        ingredient.name.toLowerCase(),
+      ),
       imgSrc: null,
       created: serverTimestamp(),
     }
@@ -102,22 +125,32 @@ export default function AddForm() {
       })
       console.log(error)
     }
-    setDisableBtn(false);
+    setDisableBtn(false)
   }
 
   return (
-    <form
-      onSubmit={submitRecipe}
-      className="mb-10 p-4 md:p-10"
-    >
+    <form onSubmit={handleSubmit} className="mb-10 p-4 md:p-10">
       <AlertSnackbar
         status={alert.show}
         toggle={closeAlert}
         severity={alert.severity}
         message={alert.message}
       />
+      <Dialog open={openConfirm}>
+        <DialogContent>
+          <DialogContentText sx={{ color: 'black' }}>
+            Is your recipe ready to submit?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseConfirm}>Go Back</Button>
+          <Button onClick={handleSubmitConfirmation} autoFocus>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
       <fieldset>
-        <div className="flex flex-col xs:flex-row space-y-3 xs:space-y-0 md:flex-nowrap w-full justify-around">
+        <div className="flex w-full flex-col justify-around space-y-3 xs:flex-row xs:space-y-0 md:flex-nowrap">
           <TextField
             onChange={({ target }) => setRecipeName(target.value)}
             value={recipeName}
@@ -158,7 +191,11 @@ export default function AddForm() {
       </fieldset>
       <hr className="my-10" />
       <div className="flex justify-center">
-        <button className="rounded-xl bg-black p-3 text-white" type="submit" disabled={disableBtn}>
+        <button
+          className="rounded-xl bg-black p-3 text-white"
+          type="submit"
+          disabled={disableBtn}
+        >
           Submit Recipe
         </button>
       </div>

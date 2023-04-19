@@ -41,7 +41,7 @@ export default function UploadFile({ upload, file }) {
           ref={fileInput}
         />
         <button
-          onClick={() => fileInput.current && fileInput.current.click()}
+          //onClick={() => fileInput.current && fileInput.current.click()}
         />
         <button onClick={clearFile}>
           <IoCloseSharp />
