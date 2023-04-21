@@ -17,7 +17,7 @@ export default function SearchBar() {
   return (
     <form
       onSubmit={submitSearch}
-      className="flex items-center justify-between rounded-lg border-2 border-white"
+      className="flex items-center justify-between rounded-lg border-2 border-white max-w-fit mx-2"
     >
       <button type="submit">
         <IoSearchSharp className="mx-2 text-2xl text-white" />
