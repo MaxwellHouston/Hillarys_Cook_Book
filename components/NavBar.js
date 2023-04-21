@@ -29,7 +29,7 @@ export default function NavBar() {
       <Link href="/recipes" className="flex h-12 w-14 mr-5 md:h-auto md:w-auto">
         <Image src={logo} alt="Chef hat" height={70} width={70} />
       </Link>
-      <div className="flex items-center justify-around sm:space-x-10 md:mr-5">
+      <div className="flex w-3/4 md:w-auto md:max-w-fit items-center justify-around sm:space-x-10 md:mr-5">
         <SearchBar />
         {!user ? (
           <Link href="/auth/login" className="hidden md:block">
