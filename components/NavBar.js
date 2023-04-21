@@ -26,10 +26,10 @@ export default function NavBar() {
 
   return (
     <nav className="fixed top-0 z-50 flex h-14 w-full items-center justify-between border-b-2 border-black bg-slate-900 py-2 px-4 text-white md:h-auto">
-      <Link href="/recipes" className="flex h-12 max-w-md mr-5 md:h-auto md:w-auto">
+      <Link href="/recipes" className="flex h-12 w-14 mr-5 md:h-auto md:w-auto">
         <Image src={logo} alt="Chef hat" height={70} width={70} />
       </Link>
-      <div className="flex max-w-fit items-center justify-around sm:space-x-10 md:mr-5">
+      <div className="flex items-center justify-around sm:space-x-10 md:mr-5">
         <SearchBar />
         {!user ? (
           <Link href="/auth/login" className="hidden md:block">
