@@ -1,8 +1,9 @@
-import { BsEggFried, BsMoonStars } from 'react-icons/bs'
+import { BsEggFried } from 'react-icons/bs'
 import { GiSandwich, GiNachos } from 'react-icons/gi'
 import { MdDinnerDining } from 'react-icons/md'
 import { RiCake3Line } from 'react-icons/ri'
 import { BiFoodMenu } from 'react-icons/bi'
+import {GiKetchup} from 'react-icons/gi'
 
 export default function HomeTabs({ tab, setTab }) {
 
@@ -26,8 +27,8 @@ export default function HomeTabs({ tab, setTab }) {
       <button onClick={() => {setTab("Snacks")}} className={`hover:contrast-200 mx-1 rounded-t-lg bg-orange-300 p-3 sm:p-5 ${tab === 'Snacks' && 'shadow-[0_-4px_6px_-1px] shadow-black'}`}>
         <GiNachos className="xs:text-2xl" />
       </button>
-      <button onClick={() => {setTab("Munchies")}} className={`hover:contrast-200 mx-1 rounded-t-lg bg-green-300 p-3 sm:p-5 ${tab === 'Munchies' && 'shadow-[0_-4px_6px_-1px] shadow-black'}`}>
-        <BsMoonStars className="xs:text-2xl" />
+      <button onClick={() => {setTab("Sauces/Marinades")}} className={`hover:contrast-200 mx-1 rounded-t-lg bg-green-300 p-3 sm:p-5 ${tab === 'Sauces/Marinades' && 'shadow-[0_-4px_6px_-1px] shadow-black'}`}>
+        <GiKetchup className="xs:text-2xl" />
       </button>
     </div>
   )

@@ -1,15 +1,22 @@
+import FavoritesContext from '../context/favoritesContext'
+import FavoritesErrorAlert from './FavoritesErrorAlert'
+import MobileTray from './MobileTray'
 import NavBar from './NavBar'
 
 export default function Layout({ children }) {
   return (
-    <div
-      id="background"
-      className=" flex flex-wrap justify-center bg-slate-300 font-poppins"
-    >
-      <NavBar />
-      <main className="max-w-3xl w-full md:w-[48rem] bg-white">{children}</main>
-    </div>
+    <FavoritesContext>
+      <div
+        id="background"
+        className=" flex flex-wrap justify-center bg-slate-300 font-poppins"
+      >
+        <NavBar />
+        <main className="mt-16 w-full max-w-3xl bg-white md:w-[48rem]">
+          {children}
+        </main>
+        <MobileTray />
+        <FavoritesErrorAlert />
+      </div>
+    </FavoritesContext>
   )
 }
-
-//mx-6 md:max-w-2xl md-mx-auto

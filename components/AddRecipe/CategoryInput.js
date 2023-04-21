@@ -11,7 +11,7 @@ export default function CategoryInput({ category, updateCategory }) {
     'Dinner',
     'Dessert',
     'Snack',
-    'Munchies',
+    'Sauces/Marinades',
   ]
 
   return (

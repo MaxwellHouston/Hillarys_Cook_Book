@@ -8,6 +8,7 @@ module.exports = {
   theme: {
     screens: {
       xs: '475px',
+      'mui-sm': '600px',
       ...defaultTheme.screens,
     },
     extend: {

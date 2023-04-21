@@ -129,7 +129,7 @@ export default function AddForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-10 p-4 md:p-10">
+    <form onSubmit={handleSubmit} className="mb-16 md:mb-8 p-4 md:p-10">
       <AlertSnackbar
         status={alert.show}
         toggle={closeAlert}

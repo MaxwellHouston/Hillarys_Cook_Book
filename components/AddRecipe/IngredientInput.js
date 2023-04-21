@@ -1,5 +1,4 @@
 import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
 import Autocomplete from '@mui/material/Autocomplete'
 import { IoTrashSharp } from 'react-icons/io5'
 import IngredientGroupTags from './IngredientGroupTags'
@@ -47,6 +46,12 @@ export default function IngredientInput({
     'clove',
     'piece',
     'square',
+    'each',
+    'can',
+    'unit',
+    'liter',
+    'ml',
+    'gram',
   ]
 
   return (
