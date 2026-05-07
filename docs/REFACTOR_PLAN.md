@@ -327,13 +327,178 @@ service cloud.firestore {
 
 ## Next Steps (Future Phases)
 
-### Drop MUI — Replace with Tailwind + shadcn/ui
-Once the above phases are stable, MUI can be removed to significantly reduce bundle size and unify the styling system under Tailwind.
+### Drop MUI — Replace with Tailwind + shadcn/ui ✅
+Completed. All MUI components replaced with Tailwind utility classes and shadcn/ui primitives. `@mui/material`, `@emotion/react`, and `@emotion/styled` removed.
 
-- Install shadcn/ui: `npx shadcn-ui@latest init`
-- Replace MUI components one-by-one: `TextField` → shadcn `Input`, `Button` → shadcn `Button`, `Dialog` → shadcn `Dialog`, etc.
-- Remove `@mui/material`, `@emotion/react`, `@emotion/styled` from `package.json`
-- This phase is safe to do incrementally — MUI and shadcn/ui can coexist temporarily
+---
+
+## Phase 4: Recipe Scaling & Strict Ingredient Model
+
+**Goal:** Enable recipes to be doubled, halved, or scaled by any factor. This requires replacing the current loosely-typed ingredient model with a strict numeric + unit system, and adding conversion logic so scaled amounts display cleanly (e.g. `1.5 cups` → `1 cup + 8 tbsp`, `3 tsp` → `1 tbsp`).
+
+### Problems with the current model
+
+- `amount` is a `string` — impossible to do arithmetic on `"1/2"` or `"1 1/4"` without parsing
+- `measure` is a `string` — no type safety, no conversion table, typos silently accepted
+- `Recipe` has no `servings` field — scaling has no reference baseline
+
+---
+
+### Step 1 — Install libraries
+
+```bash
+npm install fraction.js convert-units
+npm install --save-dev @types/convert-units
+```
+
+- **`fraction.js`** — parses and formats fractions (`"1 1/4"` ↔ `1.25`, `0.667` → `"2/3"`)
+- **`convert-units`** — unit conversion table for volume and weight (tsp → tbsp → cup → fl oz, oz → lb, ml → l, g → kg)
+
+---
+
+### Step 2 — Define strict types
+
+Replace the loose `Ingredient` type in `types/index.ts`:
+
+```ts
+export type VolumeUnit = 'tsp' | 'tbsp' | 'fl. oz' | 'cup' | 'pt' | 'qt' | 'gallon' | 'ml' | 'liter'
+export type WeightUnit = 'oz' | 'lbs' | 'gram' | 'kg'
+export type CountUnit = 'each' | 'piece' | 'clove' | 'slice' | 'square' | 'can' | 'unit'
+export type OtherUnit = 'other'
+
+export type MeasureUnit = VolumeUnit | WeightUnit | CountUnit | OtherUnit
+
+export type Ingredient = {
+  key: number;
+  name: string;
+  amount: number;       // was string — stored as decimal (1/2 → 0.5)
+  measure: MeasureUnit; // was string
+  freeform: boolean;    // true for "to taste", "as needed", "pinch", etc.
+  tag: string | null;
+}
+
+// Add servings to Recipe
+export type Recipe = {
+  // ...existing fields
+  servings: number | null;  // null = unknown/unspecified
+}
+```
+
+**`freeform` behaviour:** when `freeform: true`, the ingredient's `amount` and `measure` are ignored during scaling. The display shows just the ingredient name (e.g. `"Salt — to taste"`). The Add Recipe form gets a "To taste" toggle that sets `freeform: true` and clears `amount`/`measure`.
+
+---
+
+### Step 3 — Build the scaling utilities (`utilities/scaling.ts`)
+
+No unit conversion — scaling multiplies the amount only. `1.5 cups` stays `1.5 cups`. This keeps the logic simple and predictable.
+
+```ts
+import Fraction from 'fraction.js'
+
+// Parse a fraction string entered by a user into a number
+// "1/2" → 0.5, "1 1/4" → 1.25, "2" → 2
+export const parseFraction = (input: string): number => {
+  return new Fraction(input).valueOf()
+}
+
+// Format a decimal as a readable fraction string for display
+// 0.5 → "1/2", 0.75 → "3/4", 1.5 → "1 1/2", 2.0 → "2"
+export const formatAmount = (value: number): string => {
+  return new Fraction(value).toFraction(true)
+}
+
+// Scale an amount by a factor — unit never changes
+// freeform ingredients pass through unscaled
+export const scaleIngredient = (ingredient: Ingredient, factor: number): string => {
+  if (ingredient.freeform) return 'to taste'
+  return `${formatAmount(ingredient.amount * factor)} ${ingredient.measure}`
+}
+```
+
+> **No dependency on `convert-units`** — skip that install.
+
+---
+
+### Step 4 — Scaling UI on the recipe page
+
+Add a scale selector to `app/(main)/recipes/[id]/page.tsx`:
+
+```tsx
+const SCALE_OPTIONS = [
+  { label: '½×', value: 0.5 },
+  { label: '1×', value: 1 },
+  { label: '2×', value: 2 },
+  { label: '3×', value: 3 },
+]
+
+const [scale, setScale] = useState(1)
+```
+
+Render a button group below the recipe title. Pass `scale` down to `<Ingredients>` which uses `scaleIngredient()` on each amount before display.
+
+Scaling is **display-only** — the stored Firestore data never changes. If the recipe has `servings`, show `"Serves {recipe.servings * scale}"`.
+
+---
+
+### Step 5 — Update the Add Recipe form
+
+- Amount input: accepts decimals **or** fraction strings (`"1/2"`, `"1 1/4"`). On blur, parse with `parseFraction()` and store as a number.
+- Measure: already a `<select>` — update options to match `MeasureUnit` union exactly.
+- Servings: add a new numeric input field.
+
+---
+
+### Step 6 — Migrate existing Firestore data
+
+Write a one-off migration script (similar to `bootstrap-admins.ts`) using the Admin SDK. Run in **dry-run mode first** to preview all changes before writing anything.
+
+**Migration logic:**
+
+1. Fetch all recipes via Admin SDK
+2. For each ingredient, parse `amount` string → number:
+   - `"1/2"` → `0.5`, `"1 1/4"` → `1.25`, `"2"` → `2`
+   - `"to taste"` / `""` / unparseable → `amount: 0, freeform: true`
+3. Validate `measure` against `MeasureUnit` — unknown values → `measure: 'other'`, logged for review
+4. Set `freeform: false` on all other ingredients
+5. Add `servings: null` to all recipes
+6. Write via Admin SDK batch writes (max 500 docs/batch)
+
+**Rollback plan:**
+
+Before writing any changes, the script exports the current state of every recipe to a timestamped JSON backup file (e.g. `backups/recipes-2026-05-07.json`). If anything goes wrong:
+
+```ts
+// rollback script reads the backup and restores all docs via batch writes
+npx tsx scripts/rollback-migration.ts backups/recipes-2026-05-07.json
+```
+
+The backup file must be committed (or at minimum kept locally) before the migration runs. `backups/` should be added to `.gitignore` since it may contain recipe content you don't want in the repo — keep it in a safe local location instead.
+
+**Execution order:**
+```bash
+# 1. Preview changes, no writes
+npx tsx scripts/migrate-ingredients.ts --dry-run
+
+# 2. Review the output log — check freeform flags and measure fallbacks
+
+# 3. Run for real
+npx tsx scripts/migrate-ingredients.ts
+
+# 4. Verify a few recipes in the app, then delete the scripts
+```
+
+---
+
+### Verification
+
+- Doubling a recipe shows all amounts × 2 with clean fraction display
+- `3 tsp` scales to `1 tbsp` (not `3 tsp × 2 = 6 tsp`)
+- `1/2 cup` halved displays as `1/4 cup`
+- Amounts like `"to taste"` are handled gracefully (displayed as-is, not scaled)
+- Add form accepts `"1 1/4"` as input and stores `1.25`
+- TypeScript rejects any `measure` value not in `MeasureUnit`
+
+---
 
 ### React Native Mobile App
 With the web app stable and the Firebase backend solid, a React Native app is the natural next step for a native mobile experience.
