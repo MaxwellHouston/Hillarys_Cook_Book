@@ -1,9 +1,7 @@
-import Stack from '@mui/material/Stack'
-
 export default function FavoriteBar() {
   return (
-    <Stack className="border-y-2 p-5" direction="row" spacing={2}>
+    <div className="flex flex-row border-y-2 p-5 gap-2">
       {/* RecipeCard component not yet implemented */}
-    </Stack>
+    </div>
   )
 }

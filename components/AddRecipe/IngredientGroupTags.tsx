@@ -1,4 +1,3 @@
-import { Autocomplete, TextField } from '@mui/material'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { Group } from '../../types'
 
@@ -11,24 +10,20 @@ interface IngredientGroupTagsProps {
 export default function IngredientGroupTags({ groups, tag, update }: IngredientGroupTagsProps) {
   const [groupList, setGroupList] = useState<string[]>([])
 
-  const handleTagChange = (_event: SyntheticEvent, values: string) => {
-    update(values)
-  }
-
   useEffect(() => {
-    setGroupList(groups.map((group) => group.name))
+    setGroupList(groups.map((group) => group.name).filter(Boolean))
   }, [groups])
 
   return (
-    <Autocomplete
-      className="w-1/4"
-      size="small"
-      includeInputInList
-      disableClearable
-      options={groupList.filter((group) => group)}
-      renderInput={(params) => <TextField {...params} label="Tags" />}
-      value={tag ?? undefined}
-      onChange={handleTagChange}
-    />
+    <select
+      value={tag ?? ''}
+      onChange={(e) => update(e.target.value)}
+      className="w-1/4 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+    >
+      <option value="">Tag</option>
+      {groupList.map((g) => (
+        <option key={g} value={g}>{g}</option>
+      ))}
+    </select>
   )
 }

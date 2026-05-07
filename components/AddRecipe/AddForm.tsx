@@ -1,32 +1,30 @@
-import TextField from '@mui/material/TextField'
+'use client'
+
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import IngredientForm from './IngredientForm'
 import DirectionsForm from './DirectionsForm'
 import UploadFile from './UploadFile'
 import { auth, db, storage } from '../../utilities/firebase'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import {
-  addDoc,
-  collection,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore'
+import { addDoc, collection, serverTimestamp, updateDoc } from 'firebase/firestore'
 import { FormEvent, useState } from 'react'
 import AlertSnackbar from '../AlertSnackbar'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import CategoryInput from './CategoryInput'
 import GroupsForm from './GroupsForm'
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-} from '@mui/material'
-import { AlertColor } from '@mui/material/Alert'
 import { Ingredient, Direction, Group } from '../../types'
 
+type AlertSeverity = 'success' | 'error'
+
 export default function AddForm() {
-  const [user, loading] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   const [recipeName, setRecipeName] = useState('')
   const [recipeAuthor, setRecipeAuthor] = useState('')
   const [imgFile, setImageFile] = useState<File | null>(null)
@@ -36,7 +34,7 @@ export default function AddForm() {
     { key: 0, name: '', amount: '', measure: 'other', tag: null },
   ])
   const [directionsList, setDirectionsList] = useState<Direction[]>([{ description: '' }])
-  const [alert, setAlert] = useState<{ show: boolean; message: string; severity: AlertColor }>({
+  const [alert, setAlert] = useState<{ show: boolean; message: string; severity: AlertSeverity }>({
     show: false,
     message: '',
     severity: 'success',
@@ -54,10 +52,6 @@ export default function AddForm() {
     submitRecipe()
   }
 
-  const handleCloseConfirm = () => {
-    setOpenConfirm(false)
-  }
-
   const closeAlert = () => {
     setAlert({ show: false, message: '', severity: 'success' })
   }
@@ -68,27 +62,19 @@ export default function AddForm() {
     setImageFile(null)
     setCategory(null)
     setGroups([{ id: 0, name: '' }])
-    setIngredientsList([
-      { key: 0, name: '', amount: '', measure: 'other', tag: null },
-    ])
+    setIngredientsList([{ key: 0, name: '', amount: '', measure: 'other', tag: null }])
     setDirectionsList([{ description: '' }])
   }
 
   const deleteTags = (name: string) => {
-    let updatedArray = ingredientsList.map((ingredient) => {
-      if (ingredient.tag === name) {
-        ingredient.tag = null
-        return ingredient
-      } else {
-        return ingredient
-      }
-    })
-    setIngredientsList(updatedArray)
+    setIngredientsList(ingredientsList.map((ingredient) =>
+      ingredient.tag === name ? { ...ingredient, tag: null } : ingredient
+    ))
   }
 
   const submitRecipe = async () => {
     setDisableBtn(true)
-    let recipeObject = {
+    const recipeObject = {
       uploader: user!.displayName,
       uploaderAvatar: user!.photoURL,
       name: recipeName,
@@ -97,34 +83,21 @@ export default function AddForm() {
       groups,
       ingredientsList,
       directionsList,
-      keywordsArray: ingredientsList.map((ingredient) =>
-        ingredient.name.toLowerCase(),
-      ),
+      keywordsArray: ingredientsList.map((i) => i.name.toLowerCase()),
       imgSrc: null as string | null,
       created: serverTimestamp(),
     }
-    const collectionRef = collection(db, 'recipes')
     try {
-      const upload = await addDoc(collectionRef, recipeObject)
+      const upload = await addDoc(collection(db, 'recipes'), recipeObject)
       const imageRef = ref(storage, `recipe-images/${upload.id}`)
       if (imgFile) {
-        let imgSnapshot = await uploadBytes(imageRef, imgFile)
+        const imgSnapshot = await uploadBytes(imageRef, imgFile)
         updateDoc(upload, { imgSrc: await getDownloadURL(imgSnapshot.ref) })
       }
-      setAlert({
-        ...alert,
-        show: true,
-        severity: 'success',
-        message: 'Recipe uploaded successfully!',
-      })
+      setAlert({ show: true, severity: 'success', message: 'Recipe uploaded successfully!' })
       clearForm()
     } catch (error) {
-      setAlert({
-        ...alert,
-        show: true,
-        severity: 'error',
-        message: 'Upload Failed. Try again or contact site Admin.',
-      })
+      setAlert({ show: true, severity: 'error', message: 'Upload Failed. Try again or contact site Admin.' })
       console.log(error)
     }
     setDisableBtn(false)
@@ -138,47 +111,43 @@ export default function AddForm() {
         severity={alert.severity}
         message={alert.message}
       />
-      <Dialog open={openConfirm}>
+      <Dialog open={openConfirm} onOpenChange={setOpenConfirm}>
         <DialogContent>
-          <DialogContentText sx={{ color: 'black' }}>
-            Is your recipe ready to submit?
-          </DialogContentText>
+          <p className="text-black">Is your recipe ready to submit?</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenConfirm(false)}>Go Back</Button>
+            <Button onClick={handleSubmitConfirmation}>Submit</Button>
+          </DialogFooter>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseConfirm}>Go Back</Button>
-          <Button onClick={handleSubmitConfirmation} autoFocus>
-            Submit
-          </Button>
-        </DialogActions>
       </Dialog>
       <fieldset>
-        <div className="flex w-full flex-col justify-around space-y-3 xs:flex-row xs:space-y-0 md:flex-nowrap">
-          <TextField
-            onChange={({ target }) => setRecipeName(target.value)}
-            value={recipeName}
-            required
-            label="Recipe Name"
-            variant="outlined"
-            size="small"
-          />
-          <TextField
-            onChange={({ target }) => setRecipeAuthor(target.value)}
-            value={recipeAuthor}
-            required
-            label="Recipe By"
-            variant="outlined"
-            size="small"
-          />
+        <div className="flex w-full flex-col justify-around space-y-3 xs:flex-row xs:space-y-0 md:flex-nowrap md:gap-4">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="recipeName">Recipe Name <span className="text-red-500">*</span></Label>
+            <Input
+              id="recipeName"
+              required
+              value={recipeName}
+              onChange={({ target }) => setRecipeName(target.value)}
+              placeholder="Recipe Name"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="recipeAuthor">Recipe By <span className="text-red-500">*</span></Label>
+            <Input
+              id="recipeAuthor"
+              required
+              value={recipeAuthor}
+              onChange={({ target }) => setRecipeAuthor(target.value)}
+              placeholder="Recipe By"
+            />
+          </div>
           <CategoryInput category={category} updateCategory={setCategory} />
         </div>
         <hr className="my-8" />
         <UploadFile upload={(file: File | null) => setImageFile(file)} file={imgFile} />
         <hr className="my-8" />
-        <GroupsForm
-          groups={groups}
-          updateGroups={setGroups}
-          deleteTags={deleteTags}
-        />
+        <GroupsForm groups={groups} updateGroups={setGroups} deleteTags={deleteTags} />
         <hr className="my-8" />
         <IngredientForm
           ingredientsList={ingredientsList}
@@ -186,15 +155,12 @@ export default function AddForm() {
           groups={groups}
         />
         <hr className="my-8" />
-        <DirectionsForm
-          directionsList={directionsList}
-          updateDirectionsList={setDirectionsList}
-        />
+        <DirectionsForm directionsList={directionsList} updateDirectionsList={setDirectionsList} />
       </fieldset>
       <hr className="my-10" />
       <div className="flex justify-center">
         <button
-          className="rounded-xl bg-black p-3 text-white"
+          className="rounded-xl bg-black p-3 text-white disabled:opacity-50"
           type="submit"
           disabled={disableBtn}
         >

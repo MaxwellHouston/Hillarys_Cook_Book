@@ -1,17 +1,12 @@
 'use client'
 
-import { ReactElement } from 'react'
 import Image from 'next/image'
-import ImageList from '@mui/material/ImageList'
-import ImageListItem from '@mui/material/ImageListItem'
-import ImageListItemBar from '@mui/material/ImageListItemBar'
 import Link from 'next/link'
 import { HiHeart } from 'react-icons/hi'
 import { useContext } from 'react'
 import { Favorites } from '../../context/favoritesContext'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../../utilities/firebase'
-import { useMediaQuery } from '@mui/material'
 import { Recipe } from '../../types'
 
 interface RecipeLayoutProps {
@@ -21,57 +16,43 @@ interface RecipeLayoutProps {
 export default function RecipeLayout({ recipes }: RecipeLayoutProps) {
   const { toggleFavorite, isFavorite } = useContext(Favorites)!
   const [user] = useAuthState(auth)
-  const matches = useMediaQuery('(min-width: 600px)')
 
-  const renderSkeleton = () => {
-    let array: ReactElement[] = []
-    for (let i = 0; i < 9; i++) {
-      array.push(
-        <ImageListItem key={i} className="overflow-hidden">
-          <div className="h-[200px] w-[200px] animate-pulse bg-slate-300"></div>
-        </ImageListItem>,
-      )
-    }
-    return array
-  }
+  const renderSkeleton = () =>
+    Array.from({ length: 9 }).map((_, i) => (
+      <div key={i} className="overflow-hidden">
+        <div className="h-[200px] w-full animate-pulse bg-slate-300" />
+      </div>
+    ))
 
-  const renderRecipes = () => {
-    return recipes!.map((recipe) => {
-      return (
-        <ImageListItem key={recipe.id} className="relative overflow-hidden">
-          <HiHeart
-            onClick={() => {
-              toggleFavorite(recipe.id)
-            }}
-            className={`absolute right-0 bg-black/50 text-4xl hover:cursor-pointer ${
-              isFavorite(recipe.id) ? 'text-red-600' : 'text-white'
-            } ${!user && 'hidden'}`}
+  const renderRecipes = () =>
+    recipes!.map((recipe) => (
+      <div key={recipe.id} className="relative overflow-hidden">
+        <HiHeart
+          onClick={() => toggleFavorite(recipe.id)}
+          className={`absolute right-0 z-10 bg-black/50 text-4xl hover:cursor-pointer ${
+            isFavorite(recipe.id) ? 'text-red-600' : 'text-white'
+          } ${!user && 'hidden'}`}
+        />
+        <Link href={`/recipes/${recipe.id}`} className="block">
+          <Image
+            className="h-[200px] w-full object-cover"
+            src={recipe.imgSrc!}
+            alt={recipe.name}
+            width={500}
+            height={500}
+            loading="lazy"
           />
-          <Link
-            href={`/recipes/${recipe.id}`}
-            className="flex min-h-[200px]"
-          >
-            <Image
-              className="object-center"
-              src={recipe.imgSrc!}
-              alt={recipe.name}
-              width={500}
-              height={500}
-              loading="lazy"
-            />
-          </Link>
-          <ImageListItemBar
-            title={recipe.name}
-            subtitle={`By: ${recipe.author}`}
-          />
-        </ImageListItem>
-      )
-    })
-  }
+          <div className="bg-slate-800 px-2 py-1 text-left text-white">
+            <p className="truncate text-sm font-semibold">{recipe.name}</p>
+            <p className="truncate text-xs text-slate-300">By: {recipe.author}</p>
+          </div>
+        </Link>
+      </div>
+    ))
 
   return (
-    <ImageList className="w-full" cols={matches ? 3 : 2} rowHeight={200}>
+    <div className="grid w-full grid-cols-2 gap-1 sm:grid-cols-3">
       {recipes ? renderRecipes() : renderSkeleton()}
-    </ImageList>
+    </div>
   )
 }

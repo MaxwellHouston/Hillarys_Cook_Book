@@ -1,4 +1,4 @@
-import { InputAdornment, OutlinedInput } from '@mui/material'
+import { Input } from '@/components/ui/input'
 import { ChangeEvent } from 'react'
 import { IoCloseSharp } from 'react-icons/io5'
 
@@ -14,23 +14,22 @@ export default function GroupInput({ id, name, update, remove }: GroupInputProps
     update(target.value, id)
   }
 
-  const handleDelete = () => {
-    remove(id, name)
-  }
-
   return (
-    <OutlinedInput
-      className="xs:w-1/4 pr-1"
-      size="small"
-      value={name}
-      onChange={handleUpdate}
-      endAdornment={
-        <InputAdornment position="end">
-          <button onClick={handleDelete}>
-            <IoCloseSharp className="cursor-pointer rounded-full p-1 text-2xl hover:bg-slate-200" />
-          </button>
-        </InputAdornment>
-      }
-    />
+    <div className="relative xs:w-1/4">
+      <Input
+        className="pr-8"
+        size={undefined}
+        value={name}
+        onChange={handleUpdate}
+        placeholder="Group name"
+      />
+      <button
+        type="button"
+        onClick={() => remove(id, name)}
+        className="absolute right-1 top-1/2 -translate-y-1/2"
+      >
+        <IoCloseSharp className="cursor-pointer rounded-full p-1 text-2xl hover:bg-slate-200" />
+      </button>
+    </div>
   )
 }

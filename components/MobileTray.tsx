@@ -1,6 +1,5 @@
 'use client'
 
-import { BottomNavigation, BottomNavigationAction } from '@mui/material'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../utilities/firebase'
 import { AiOutlineUser } from 'react-icons/ai'
@@ -11,25 +10,22 @@ import { useEffect, useState } from 'react'
 import { isAdmin } from '../utilities/authCheck'
 import { MdAdd } from 'react-icons/md'
 
+function TrayButton({ label, icon, onClick }: { label: string; icon: React.ReactNode; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-1 flex-col items-center justify-center gap-1 py-2 text-white text-xs"
+    >
+      <span className="text-xl">{icon}</span>
+      {label}
+    </button>
+  )
+}
+
 export default function MobileTray() {
   const [user] = useAuthState(auth)
   const [userAuthorized, setUserAuthorized] = useState(false)
-
   const router = useRouter()
-
-  const recipes = () => {
-    return router.push('/add')
-  }
-  const profile = () => {
-    return router.push('/profile')
-  }
-  const logout = () => {
-    auth.signOut()
-    return router.push('/')
-  }
-  const login = () => {
-    return router.push('/auth/login')
-  }
 
   useEffect(() => {
     if (user) {
@@ -38,58 +34,23 @@ export default function MobileTray() {
   }, [user])
 
   return (
-    <div className="fixed bottom-0 left-0 w-full md:hidden">
+    <div className="fixed bottom-0 left-0 w-full bg-slate-900 border-t border-slate-700 flex md:hidden">
       {userAuthorized ? (
-        <BottomNavigation showLabels sx={{ backgroundColor: '#0f172a' }}>
-          <BottomNavigationAction
-            label="Add Recipes"
-            onClick={recipes}
-            sx={{ color: 'white' }}
-            icon={<MdAdd className="text-xl" />}
-          />
-          <BottomNavigationAction
-            label="Profile"
-            onClick={profile}
-            sx={{ color: 'white' }}
-            icon={<AiOutlineUser className="text-xl" />}
-          />
-          <BottomNavigationAction
-            label="Logout"
-            onClick={logout}
-            sx={{ color: 'white' }}
-            icon={<MdLogout className="text-xl" />}
-          />
-        </BottomNavigation>
+        <>
+          <TrayButton label="Add Recipes" icon={<MdAdd />} onClick={() => router.push('/add')} />
+          <TrayButton label="Profile" icon={<AiOutlineUser />} onClick={() => router.push('/profile')} />
+          <TrayButton label="Logout" icon={<MdLogout />} onClick={() => { auth.signOut(); router.push('/') }} />
+        </>
       ) : user ? (
-        <BottomNavigation showLabels sx={{ backgroundColor: '#0f172a' }}>
-          <BottomNavigationAction
-            label="Profile"
-            onClick={profile}
-            sx={{ color: 'white' }}
-            icon={<AiOutlineUser className="text-xl" />}
-          />
-          <BottomNavigationAction
-            label="Logout"
-            onClick={logout}
-            sx={{ color: 'white' }}
-            icon={<MdLogout className="text-xl" />}
-          />
-        </BottomNavigation>
+        <>
+          <TrayButton label="Profile" icon={<AiOutlineUser />} onClick={() => router.push('/profile')} />
+          <TrayButton label="Logout" icon={<MdLogout />} onClick={() => { auth.signOut(); router.push('/') }} />
+        </>
       ) : (
-        <BottomNavigation showLabels sx={{ backgroundColor: '#0f172a' }}>
-          <BottomNavigationAction
-            label="Recipes"
-            onClick={recipes}
-            sx={{ color: 'white' }}
-            icon={<GiCookingPot className="text-xl" />}
-          />
-          <BottomNavigationAction
-            label="Log in"
-            onClick={login}
-            sx={{ color: 'white' }}
-            icon={<MdLogout className="text-xl" />}
-          />
-        </BottomNavigation>
+        <>
+          <TrayButton label="Recipes" icon={<GiCookingPot />} onClick={() => router.push('/recipes')} />
+          <TrayButton label="Log in" icon={<MdLogout />} onClick={() => router.push('/auth/login')} />
+        </>
       )}
     </div>
   )

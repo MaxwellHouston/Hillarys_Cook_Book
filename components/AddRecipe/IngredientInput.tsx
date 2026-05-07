@@ -1,5 +1,4 @@
-import TextField from '@mui/material/TextField'
-import Autocomplete from '@mui/material/Autocomplete'
+import { Input } from '@/components/ui/input'
 import { IoTrashSharp } from 'react-icons/io5'
 import IngredientGroupTags from './IngredientGroupTags'
 import { ChangeEvent, MouseEvent, SyntheticEvent } from 'react'
@@ -16,87 +15,39 @@ interface IngredientInputProps {
   deleteIngredient: (id: number) => void;
 }
 
+const measurementOptions = [
+  'other', 'cup', 'tbsp', 'tsp', 'fl. oz', 'pt', 'qt', 'gallon',
+  'slice', 'lbs', 'oz', 'clove', 'piece', 'square', 'each', 'can',
+  'unit', 'liter', 'ml', 'gram',
+]
+
 export default function IngredientInput({
-  id,
-  name,
-  amount,
-  measure,
-  tag,
-  groups,
-  updateValue,
-  deleteIngredient,
+  id, name, amount, measure, tag, groups, updateValue, deleteIngredient,
 }: IngredientInputProps) {
-  const handleNameChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    updateValue(id, target.value, 'name')
-  }
-  const handleAmountChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    updateValue(id, target.value.toString(), 'amount')
-  }
-  const handleMeasureChange = (_event: SyntheticEvent, values: string) => {
-    updateValue(id, values, 'measure')
-  }
-  const handleTagChange = (value: string) => {
-    updateValue(id, value, 'tag')
-  }
-
-  const handleDelete = (e: MouseEvent) => {
-    e.preventDefault()
-    deleteIngredient(id)
-  }
-
-  const measurementOptions = [
-    'other',
-    'cup',
-    'tbsp',
-    'tsp',
-    'fl. oz',
-    'pt',
-    'qt',
-    'gallon',
-    'slice',
-    'lbs',
-    'oz',
-    'clove',
-    'piece',
-    'square',
-    'each',
-    'can',
-    'unit',
-    'liter',
-    'ml',
-    'gram',
-  ]
-
   return (
-    <fieldset className="flex flex-col space-y-3 md:space-y-0 md:flex-row w-full md:space-x-5 md:p-4">
-      <TextField
-        label="Ingredient"
-        variant="outlined"
-        size="small"
+    <fieldset className="flex flex-col space-y-3 md:flex-row md:space-y-0 md:space-x-5 md:p-4 w-full">
+      <Input
+        placeholder="Ingredient"
         value={name}
-        onChange={handleNameChange}
+        onChange={({ target }: ChangeEvent<HTMLInputElement>) => updateValue(id, target.value, 'name')}
       />
-      <TextField
+      <Input
         className="md:w-1/6"
-        label="Amount"
-        variant="outlined"
-        size="small"
+        placeholder="Amount"
         value={amount}
-        onChange={handleAmountChange}
+        onChange={({ target }: ChangeEvent<HTMLInputElement>) => updateValue(id, target.value, 'amount')}
       />
-      <Autocomplete
-        className="md:w-1/6"
-        size="small"
-        includeInputInList
-        disableClearable
-        options={measurementOptions}
-        renderInput={(params) => <TextField {...params} label="Measurement" />}
+      <select
+        className="md:w-1/6 h-9 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
         value={measure}
-        onChange={handleMeasureChange}
-      />
-      <IngredientGroupTags groups={groups} tag={tag} update={handleTagChange} />
-
-      <button onClick={handleDelete}>
+        onChange={(e) => updateValue(id, e.target.value, 'measure')}
+      >
+        {measurementOptions.map((m) => (
+          <option key={m} value={m}>{m}</option>
+        ))}
+      </select>
+      <IngredientGroupTags groups={groups} tag={tag} update={(v) => updateValue(id, v, 'tag')} />
+      <button type="button" onClick={(e: MouseEvent) => { e.preventDefault(); deleteIngredient(id) }}>
         <IoTrashSharp className="text-2xl" />
       </button>
     </fieldset>
