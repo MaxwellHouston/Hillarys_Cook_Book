@@ -1,3 +1,5 @@
+'use client'
+
 import { useContext } from "react";
 import AlertSnackbar from "./AlertSnackbar";
 import { Favorites } from "../context/favoritesContext";

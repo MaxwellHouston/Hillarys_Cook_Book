@@ -1,15 +1,17 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
 import logo from '../utilities/photos/chef-logo.png'
 import { auth } from '../utilities/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import SearchBar from './SearchBar'
-import { authCheck } from '../utilities/authCheck'
+import { isAdmin } from '../utilities/authCheck'
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
-  const [user, loading] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   const [userAuthorized, setUserAuthorized] = useState(false)
   const route = useRouter()
 
@@ -20,7 +22,7 @@ export default function NavBar() {
 
   useEffect(() => {
     if (user) {
-      setUserAuthorized(authCheck(user.uid))
+      isAdmin(user).then(setUserAuthorized)
     }
   }, [user])
 

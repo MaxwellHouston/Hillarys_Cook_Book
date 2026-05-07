@@ -1,4 +1,6 @@
-import { useRouter } from 'next/router'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import { IoSearchSharp } from 'react-icons/io5'
 
@@ -8,10 +10,7 @@ export default function SearchBar() {
 
   const submitSearch = (e: FormEvent) => {
     e.preventDefault()
-    route.push({
-      pathname: '/recipes-search',
-      query: { searchParams: searchInput },
-    })
+    route.push(`/recipes-search?searchParams=${encodeURIComponent(searchInput)}`)
   }
 
   return (

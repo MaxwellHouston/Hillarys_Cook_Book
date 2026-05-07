@@ -1,7 +1,15 @@
-import { collection, doc, getDoc, getDocs, setDoc } from 'firebase/firestore'
+import { QueryDocumentSnapshot, collection, doc, getDoc, getDocs, limit, orderBy, query, setDoc, startAfter, where } from 'firebase/firestore'
 import { getDownloadURL, list, ref } from 'firebase/storage'
 import { db, storage } from './firebase'
 import { Recipe, UserFavorites } from '../types'
+
+const PAGE_SIZE = 20
+
+export type RecipePage = {
+  recipes: Recipe[]
+  cursor: QueryDocumentSnapshot | null
+  hasMore: boolean
+}
 
 export const getRecipeById = async ({ id }: { id: string }): Promise<Recipe | undefined> => {
   const docRef = doc(db, 'recipes', id)
@@ -10,18 +18,32 @@ export const getRecipeById = async ({ id }: { id: string }): Promise<Recipe | un
 }
 
 export const getRecipesByArray = async (arr: string[]): Promise<Recipe[]> => {
+  if (arr.length === 0) return []
   const collectionRef = collection(db, 'recipes')
-  const snapshots = await getDocs(collectionRef)
-  const docs = snapshots.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Recipe)
-  const filteredRecipes = docs.filter((doc) => arr.includes(doc.id))
-  return filteredRecipes
+  const q = query(collectionRef, where('__name__', 'in', arr))
+  const snapshots = await getDocs(q)
+  return snapshots.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Recipe)
 }
 
-export const getAllRecipes = async (): Promise<Recipe[]> => {
+export const getRecipesPaginated = async (
+  category?: string,
+  cursor?: QueryDocumentSnapshot | null,
+): Promise<RecipePage> => {
   const collectionRef = collection(db, 'recipes')
-  const snapshots = await getDocs(collectionRef)
-  const docs = snapshots.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Recipe)
-  return docs
+  const constraints = [
+    ...(category ? [where('category', '==', category)] : []),
+    orderBy('created', 'desc'),
+    limit(PAGE_SIZE),
+    ...(cursor ? [startAfter(cursor)] : []),
+  ]
+  const q = query(collectionRef, ...constraints)
+  const snapshots = await getDocs(q)
+  const recipes = snapshots.docs.map((doc) => ({ ...doc.data(), id: doc.id }) as Recipe)
+  return {
+    recipes,
+    cursor: snapshots.docs[snapshots.docs.length - 1] ?? null,
+    hasMore: snapshots.docs.length === PAGE_SIZE,
+  }
 }
 
 export const getImageById = async ({ id }: { id: string }): Promise<string | false> => {

@@ -1,8 +1,6 @@
+import { User } from 'firebase/auth'
 
-export const authCheck = (id: string): boolean => {
-    let validUIDs = ['2qk9Y3zXcATmU7uIGvOfIUaWlC02', 'kEM6UFDasPYdqz2Yb2CGA5j2Y863', '8crRRSmyZKdBBqdeZPsluYqRx0C2'];
-    if(validUIDs.includes(id)) return true;
-    return false;
+export const isAdmin = async (user: User): Promise<boolean> => {
+  const token = await user.getIdTokenResult()
+  return token.claims['role'] === 'admin'
 }
-
-// '8crRRSmyZKdBBqdeZPsluYqRx0C2'

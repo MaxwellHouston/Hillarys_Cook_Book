@@ -1,16 +1,18 @@
+'use client'
+
 import { BottomNavigation, BottomNavigationAction } from '@mui/material'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../utilities/firebase'
 import { AiOutlineUser } from 'react-icons/ai'
 import { MdLogout } from 'react-icons/md'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { GiCookingPot } from 'react-icons/gi'
 import { useEffect, useState } from 'react'
-import { authCheck } from '../utilities/authCheck'
+import { isAdmin } from '../utilities/authCheck'
 import { MdAdd } from 'react-icons/md'
 
 export default function MobileTray() {
-  const [user, loading] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   const [userAuthorized, setUserAuthorized] = useState(false)
 
   const router = useRouter()
@@ -31,7 +33,7 @@ export default function MobileTray() {
 
   useEffect(() => {
     if (user) {
-      setUserAuthorized(authCheck(user.uid))
+      isAdmin(user).then(setUserAuthorized)
     }
   }, [user])
 

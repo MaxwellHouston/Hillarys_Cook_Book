@@ -1,3 +1,5 @@
+'use client'
+
 import { BsEggFried } from 'react-icons/bs'
 import { GiSandwich, GiNachos } from 'react-icons/gi'
 import { MdDinnerDining } from 'react-icons/md'

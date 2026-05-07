@@ -1,17 +1,18 @@
-import { auth } from '../utilities/firebase'
+'use client'
+
+import { auth } from '@/utilities/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { getRecipesByArray } from '../utilities/db'
-import RecipeLayout from '../components/Recipes/RecipeLayout'
-import { Favorites } from '../context/favoritesContext'
-import { Recipe } from '../types'
+import { getRecipesByArray } from '@/utilities/db'
+import RecipeLayout from '@/components/Recipes/RecipeLayout'
+import { Favorites } from '@/context/favoritesContext'
+import { Recipe } from '@/types'
 
 export default function Profile() {
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const route = useRouter()
   const [user, loading] = useAuthState(auth)
-
   const { favorites } = useContext(Favorites)!
 
   const checkUser = useCallback(async () => {

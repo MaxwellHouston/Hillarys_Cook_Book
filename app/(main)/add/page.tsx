@@ -1,14 +1,23 @@
-import { useRouter } from 'next/router'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import AddForm from '../components/AddRecipe/AddForm'
-import { authCheck } from '../utilities/authCheck'
-import { auth } from '../utilities/firebase'
+import { useEffect, useState } from 'react'
+import AddForm from '@/components/AddRecipe/AddForm'
+import { isAdmin } from '@/utilities/authCheck'
+import { auth } from '@/utilities/firebase'
 import { BiErrorAlt } from 'react-icons/bi'
 
 export default function Add() {
-  const [user, loading] = useAuthState(auth)
-  const isAuthorized = user ? authCheck(user.uid) : false
+  const [user] = useAuthState(auth)
+  const [isAuthorized, setIsAuthorized] = useState(false)
   const route = useRouter()
+
+  useEffect(() => {
+    if (user) {
+      isAdmin(user).then(setIsAuthorized)
+    }
+  }, [user])
 
   if (!isAuthorized) {
     return (
@@ -17,7 +26,7 @@ export default function Add() {
           <BiErrorAlt className='text-5xl my-5' />
           <p>You are not authorized to view this page.</p>
           <p>Please contact the site administrator to request access.</p>
-          <button onClick={() => {route.back()}} className='bg-white text-black font-bold my-5 py-3 px-5 rounded-lg'>Go Back</button>
+          <button onClick={() => route.back()} className='bg-white text-black font-bold my-5 py-3 px-5 rounded-lg'>Go Back</button>
         </div>
       </div>
     )

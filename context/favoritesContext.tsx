@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useState, useCallback, useEffect, ReactNode } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../utilities/firebase'

@@ -1,24 +1,28 @@
+'use client'
+
 import { FcGoogle } from 'react-icons/fc'
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
-import { auth } from '../../utilities/firebase'
+import { auth } from '@/utilities/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export default function Login() {
   const route = useRouter()
-  const [user, loading] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   const [pushCalled, setPushCalled] = useState(false)
 
-  //Google Login
+  const [error, setError] = useState<string | null>(null)
   const googleProvider = new GoogleAuthProvider()
   const GoogleLogin = async () => {
+    setError(null)
     try {
       await signInWithPopup(auth, googleProvider)
       setPushCalled(true)
       route.push('/profile')
-    } catch (error) {
-      console.log(error)
+    } catch (err: any) {
+      console.error(err)
+      setError(err?.message ?? 'Login failed')
     }
   }
 
@@ -43,6 +47,9 @@ export default function Login() {
           <FcGoogle className="text-2xl" />
           Login with Google
         </button>
+        {error && (
+          <p className="mt-4 w-full text-sm text-red-600">{error}</p>
+        )}
       </div>
     </div>
   )

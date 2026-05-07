@@ -1,11 +1,13 @@
+'use client'
+
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { auth } from '../utilities/firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useEffect } from 'react'
 
 export default function Home() {
-  const [user, loading] = useAuthState(auth)
+  const [user] = useAuthState(auth)
   const route = useRouter()
 
   useEffect(() => {

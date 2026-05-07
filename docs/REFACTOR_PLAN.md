@@ -86,7 +86,7 @@ Use `strict: true` in `tsconfig.json` to catch the most issues upfront.
 
 ---
 
-## Phase 2: Next.js App Router Migration
+## Phase 2: Next.js App Router Migration ✅
 
 **Goal:** Move from the Pages Router (`/pages`) to the App Router (`/app`), enabling React Server Components, better data fetching, and improved caching.
 

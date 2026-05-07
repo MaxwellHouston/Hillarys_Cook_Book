@@ -1,3 +1,5 @@
+'use client'
+
 import { ReactElement } from 'react'
 import Image from 'next/image'
 import ImageList from '@mui/material/ImageList'
@@ -7,7 +9,6 @@ import Link from 'next/link'
 import { HiHeart } from 'react-icons/hi'
 import { useContext } from 'react'
 import { Favorites } from '../../context/favoritesContext'
-import { useRouter } from 'next/router'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../../utilities/firebase'
 import { useMediaQuery } from '@mui/material'
@@ -19,12 +20,7 @@ interface RecipeLayoutProps {
 
 export default function RecipeLayout({ recipes }: RecipeLayoutProps) {
   const { toggleFavorite, isFavorite } = useContext(Favorites)!
-  const [user, loading] = useAuthState(auth)
-  const router = useRouter()
-  const breadCrumbData =
-    router.pathname === '/recipes-search'
-      ? { search: router.query.searchParams }
-      : null
+  const [user] = useAuthState(auth)
   const matches = useMediaQuery('(min-width: 600px)')
 
   const renderSkeleton = () => {
@@ -52,7 +48,7 @@ export default function RecipeLayout({ recipes }: RecipeLayoutProps) {
             } ${!user && 'hidden'}`}
           />
           <Link
-            href={{ pathname: `recipes/${recipe.id}`, query: breadCrumbData }}
+            href={`/recipes/${recipe.id}`}
             className="flex min-h-[200px]"
           >
             <Image
