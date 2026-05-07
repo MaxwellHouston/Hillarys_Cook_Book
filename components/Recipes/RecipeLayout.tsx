@@ -34,14 +34,20 @@ export default function RecipeLayout({ recipes }: RecipeLayoutProps) {
           } ${!user && 'hidden'}`}
         />
         <Link href={`/recipes/${recipe.id}`} className="block">
-          <Image
-            className="h-[200px] w-full object-cover"
-            src={recipe.imgSrc!}
-            alt={recipe.name}
-            width={500}
-            height={500}
-            loading="lazy"
-          />
+          {recipe.imgSrc ? (
+            <Image
+              className="h-[200px] w-full object-cover"
+              src={recipe.imgSrc}
+              alt={recipe.name}
+              width={500}
+              height={500}
+              loading="lazy"
+            />
+          ) : (
+            <div className="h-[200px] w-full bg-slate-200 flex items-center justify-center text-slate-400 text-sm">
+              No image
+            </div>
+          )}
           <div className="bg-slate-800 px-2 py-1 text-left text-white">
             <p className="truncate text-sm font-semibold">{recipe.name}</p>
             <p className="truncate text-xs text-slate-300">By: {recipe.author}</p>

@@ -14,10 +14,18 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '@/utilities/firebase'
 import { Recipe } from '@/types'
 
+const SCALE_OPTIONS = [
+  { label: '½×', value: 0.5 },
+  { label: '1×', value: 1 },
+  { label: '2×', value: 2 },
+  { label: '3×', value: 3 },
+]
+
 export default function RecipePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const [user] = useAuthState(auth)
   const [recipe, setRecipe] = useState<Recipe | null>(null)
+  const [scale, setScale] = useState(1)
   const { isFavorite, toggleFavorite } = useContext(Favorites)!
 
   const loadRecipe = useCallback(async () => {
@@ -63,10 +71,32 @@ export default function RecipePage({ params }: { params: Promise<{ id: string }>
             </button>
           </div>
           <hr className="my-10 border-slate-500" />
-          <h2 className="my-3 text-center text-2xl font-bold underline">
-            Ingredients
-          </h2>
-          <Ingredients ingredients={recipe.ingredientsList} />
+          <div className="flex items-center justify-between">
+            <h2 className="my-3 text-2xl font-bold underline">
+              Ingredients
+            </h2>
+            <div className="flex items-center gap-1">
+              {recipe.servings && (
+                <span className="mr-3 text-sm text-slate-500">
+                  Serves {Math.round(recipe.servings * scale)}
+                </span>
+              )}
+              {SCALE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setScale(opt.value)}
+                  className={`rounded px-2 py-1 text-sm font-medium border transition-colors ${
+                    scale === opt.value
+                      ? 'bg-slate-900 text-white border-slate-900'
+                      : 'bg-white text-slate-700 border-slate-300 hover:border-slate-500'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <Ingredients ingredients={recipe.ingredientsList} scale={scale} />
           <hr className="my-10 border-slate-500" />
           <h2 className="my-3 text-center text-2xl font-bold underline">
             Directions

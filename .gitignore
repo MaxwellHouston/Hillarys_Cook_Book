@@ -33,3 +33,6 @@ yarn-error.log*
 
 # TypeScript
 tsconfig.tsbuildinfo
+
+# Migration backups (keep locally, don't commit)
+/backups
